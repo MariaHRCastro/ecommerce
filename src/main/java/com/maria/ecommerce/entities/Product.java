@@ -1,6 +1,7 @@
 package com.maria.ecommerce.entities;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.ManyToAny;
@@ -13,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,20 +25,21 @@ public class Product {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long id;
 	public String name;
-	
+
 	@Column(columnDefinition = "TEXT")
 	public String description;
 	public Double price;
 	public String imgUrl;
-	
-	
+
 	@ManyToMany
-	@JoinTable(name = "tb_product_category", joinColumns = @JoinColumn(name="product_id"),
-	inverseJoinColumns = @JoinColumn(name="category_id"))
+	@JoinTable(name = "tb_product_category", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
 	private Set<Category> categories = new HashSet<>();
-	
+
+	@OneToMany(mappedBy = "id.product")
+	private Set<OrderItem> items = new HashSet<>();
+
 	public Product() {
-		
+
 	}
 
 	public Product(Long id, String name, String description, Double price, String imgUrl) {
@@ -91,7 +94,13 @@ public class Product {
 	public Set<Category> getCategories() {
 		return categories;
 	}
-	
-	
-	
+
+	public Set<OrderItem> getItems() {
+		return items;
+	}
+
+	public List<Order> getOrders() {
+		return items.stream().map(x -> x.getOrder()).toList();
+	}
+
 }
