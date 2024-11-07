@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.maria.ecommerce.dto.ProductDTO;
 import com.maria.ecommerce.entities.Product;
@@ -32,6 +33,14 @@ public class ProductService {
 		Page <Product> result = repo.findAll(pageable);
 		return result.map(x -> new ProductDTO(x));
 	}
+	
+	@Transactional
+	public ProductDTO insert(@RequestBody ProductDTO dto) {
+		Product entity = new Product(dto.getName(),dto.getDescription(),dto.getPrice(),dto.imgUrl);
+		entity = repo.save(entity);
+		return new ProductDTO(entity);
+	}
+	
 	
 	
 }
