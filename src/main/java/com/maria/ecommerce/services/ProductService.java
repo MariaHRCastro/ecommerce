@@ -1,6 +1,5 @@
 package com.maria.ecommerce.services;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +34,30 @@ public class ProductService {
 	}
 	
 	@Transactional
-	public ProductDTO insert(@RequestBody ProductDTO dto) {
-		Product entity = new Product(dto.getName(),dto.getDescription(),dto.getPrice(),dto.imgUrl);
+	public ProductDTO insert( @RequestBody ProductDTO dto) {
+		Product entity = new Product();
+		copyDtoToEntity(dto, entity);
 		entity = repo.save(entity);
 		return new ProductDTO(entity);
 	}
+	
+	
+	@Transactional
+	public ProductDTO update(Long id , @RequestBody ProductDTO dto) {
+		Product entity = repo.getReferenceById(id);
+		copyDtoToEntity(dto, entity);
+		entity = repo.save(entity);
+		return new ProductDTO(entity);
+	}
+
+	private void copyDtoToEntity(ProductDTO dto, Product entity) {
+		entity.setDescription(dto.getDescription());
+		entity.setImgUrl(dto.getImgUrl());
+		entity.setName(dto.getName());
+		entity.setPrice(dto.getPrice());
+		
+	}
+	
 	
 	
 	
